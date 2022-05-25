@@ -3,12 +3,12 @@ const Profile = require('../models/profile.js');
 
 exports.getApiDocumentation= (req,res,next)=>{
     res.write("<h1>My New Testing API</h1>")
-    res.write("<h2>Working on Post Request</h2>")
+    res.write("<h2>Working on Get Request</h2>")
 
     res.send();
   }
   
-  exports.createProfile = (req, res, next) => {
+exports.createProfile = (req, res, next) => {
     const name = req.body.name;
     const DOB = req.body.DOB;
     const Gender = req.body.Gender;
@@ -45,13 +45,39 @@ exports.getApiDocumentation= (req,res,next)=>{
         const status = err._message;
         const message = err.message;
         const title = err.name;
-        //res.write(title);
-       //res.write(message);
        res.status(500).json({
         status:status, 
         key: title,
         path: message
       });  
       });
-  };
+};
+
+exports.getProfiles = (req, res, next) => {
+  let totalItems;
+  Profile.find()
+    .countDocuments()
+    .then(count => {
+      totalItems = count;
+      return Profile.find()
+
+    })
+    .then(profiles => {
+      res.status(200).json({
+        message: 'Fetched profiles successfully.',
+        profiles: profiles,
+        totalItems: totalItems
+      });
+    })
+    .catch(err => {
+      const status = err._message;
+      const message = err.message;
+      const title = err.name;
+     res.status(500).json({
+      status:status, 
+      key: title,
+      path: message
+    });  
+    });
+};
 
