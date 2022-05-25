@@ -42,6 +42,16 @@ exports.getApiDocumentation= (req,res,next)=>{
         });   
        })
       .catch(err => {
-          res.status(400).send({ err});
+        const status = err._message;
+        const message = err.message;
+        const title = err.name;
+        //res.write(title);
+       //res.write(message);
+       res.status(500).json({
+        status:status, 
+        key: title,
+        path: message
+      });  
       });
   };
+
