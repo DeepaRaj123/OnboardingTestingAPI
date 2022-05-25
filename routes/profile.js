@@ -11,6 +11,9 @@ router.get('/', profileController.getApiDocumentation);
 router.get('/profiles', profileController.getProfiles);
 
 //POST creating profile
-router.post('/profile',profileController.createProfile)
+router.post('/profile',profileController.createProfile);
+
+//POST deleting profile
+router.delete('/profile/:profileId',profileController.deleteProfile)
 
 module.exports = router;

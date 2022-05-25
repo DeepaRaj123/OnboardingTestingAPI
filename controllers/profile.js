@@ -1,4 +1,5 @@
 const Profile = require('../models/profile.js');
+const io = require('../socket');
 
 
 exports.getApiDocumentation= (req,res,next)=>{
@@ -81,3 +82,31 @@ exports.getProfiles = (req, res, next) => {
     });
 };
 
+exports.deleteProfile = (req, res, next) => {
+  const profileId = req.params.profileId;
+  Profile.findById(profileId)
+    .then(profile => {
+      if (!profile) {
+        const error = new Error('Could not find User profile.');
+        error.statusCode = 404;
+        throw error;
+      }
+    
+      return Profile.findByIdAndRemove(profileId);
+    })
+    
+    .then(result => {
+      io.getIO().emit('profiles',{action:'delete',profile:profileId});
+      res.status(200).json({ message: 'Deleted user profile.' });
+    })
+    .catch(err => {
+      const status = err._message;
+      const message = err.message;
+      const title = err.name;
+     res.status(500).json({
+      status:status, 
+      key: title,
+      path: message
+    });  
+    });
+};
